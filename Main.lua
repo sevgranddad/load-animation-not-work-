@@ -1,16 +1,4 @@
-    VAPE STYLE ROBLOX CLIENT LOADER
-    Author: sevgranddad
-    QQ群: 1107177693
-    本版本：
-    - 废除旧加载动画
-    - 中文 VAPE 风格界面
-    - 登录账号/密码可随意填写
-    - Roblox Client #1
-    - 非匀速、分段式加载动画
-    - 加载完成后窗口保持显示
-    - 只有点击“关闭窗口”才会关闭
-    - 实际脚本注入位置保留为安全占位回调
-]]
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
