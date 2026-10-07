@@ -1,8 +1,5 @@
--- VAPE STYLE ROBLOX CLIENT LOADER
 -- Author: sevgranddad
 -- QQ群: 1107177693
--- 中文 VAPE 风格界面 / 安全测试版
-
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -129,7 +126,7 @@ local ScreenGui = new("ScreenGui", {
 
 local Splash = new("Frame", {
     Name = "StartupSplash",
-    BackgroundColor3 = Color3.fromRGB(18, 19, 21),
+    BackgroundColor3 = Color3.fromRGB(0, 0, 0),
     BackgroundTransparency = 0,
     BorderSizePixel = 0,
     Size = UDim2.fromScale(1, 1),
@@ -177,7 +174,7 @@ local SplashAuthor = new("TextLabel", {
 local Backdrop = new("Frame", {
     Name = "Backdrop",
     BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-    BackgroundTransparency = 0.42,
+    BackgroundTransparency = 0,
     BorderSizePixel = 0,
     Size = UDim2.fromScale(1, 1)
 }, ScreenGui)
@@ -214,8 +211,8 @@ local TitleText = new("TextLabel", {
 
 local MinButton = new("TextButton", {
     BackgroundTransparency = 1,
-    Position = UDim2.new(1, -88, 0, 0),
-    Size = UDim2.new(0, 28, 1, 0),
+    Position = UDim2.new(1, -90, 0, 0),
+    Size = UDim2.new(0, 30, 1, 0),
     Font = Enum.Font.Gotham,
     Text = "—",
     TextColor3 = Color3.fromRGB(70, 70, 70),
@@ -225,8 +222,8 @@ local MinButton = new("TextButton", {
 
 local MaxButton = new("TextButton", {
     BackgroundTransparency = 1,
-    Position = UDim2.new(1, -59, 0, 0),
-    Size = UDim2.new(0, 28, 1, 0),
+    Position = UDim2.new(1, -60, 0, 0),
+    Size = UDim2.new(0, 30, 1, 0),
     Font = Enum.Font.Gotham,
     Text = "□",
     TextColor3 = Color3.fromRGB(150, 150, 150),
@@ -257,8 +254,8 @@ local LogoImage = new("ImageLabel", {
     Name = "RepositoryLogo",
     BackgroundTransparency = 1,
     AnchorPoint = Vector2.new(0.5, 0),
-    Position = UDim2.new(0.5, 0, 0, 18),
-    Size = UDim2.new(0, 190, 0, 105),
+    Position = UDim2.new(0.5, 0, 0, 14),
+    Size = UDim2.new(0, 150, 0, 83),
     Image = startupImageAsset or "",
     ImageTransparency = startupImageAsset and 0 or 1,
     ScaleType = Enum.ScaleType.Fit
@@ -267,7 +264,7 @@ local LogoImage = new("ImageLabel", {
 local LogoSub = new("TextLabel", {
     BackgroundTransparency = 1,
     AnchorPoint = Vector2.new(0.5, 0),
-    Position = UDim2.new(0.5, 0, 0, 118),
+    Position = UDim2.new(0.5, 0, 0, 96),
     Size = UDim2.new(0, 250, 0, 20),
     Font = Enum.Font.Gotham,
     Text = "V4  ·  中文版",
@@ -284,7 +281,7 @@ local LoginPage = new("Frame", {
 local UserBox = new("TextBox", {
     BackgroundColor3 = Color3.fromRGB(40, 42, 45),
     BorderSizePixel = 0,
-    Position = UDim2.new(0.5, -140, 0, 112),
+    Position = UDim2.new(0.5, -140, 0, 122),
     Size = UDim2.new(0, 280, 0, 36),
     Font = Enum.Font.Gotham,
     PlaceholderText = "用户名",
@@ -301,7 +298,7 @@ stroke(UserBox, Color3.fromRGB(65, 67, 71), 0.25, 1)
 local PassBox = new("TextBox", {
     BackgroundColor3 = Color3.fromRGB(40, 42, 45),
     BorderSizePixel = 0,
-    Position = UDim2.new(0.5, -140, 0, 155),
+    Position = UDim2.new(0.5, -140, 0, 166),
     Size = UDim2.new(0, 280, 0, 36),
     Font = Enum.Font.Gotham,
     PlaceholderText = "密码",
@@ -318,7 +315,7 @@ stroke(PassBox, Color3.fromRGB(65, 67, 71), 0.25, 1)
 local LoginButton = new("TextButton", {
     BackgroundColor3 = Color3.fromRGB(70, 166, 151),
     BorderSizePixel = 0,
-    Position = UDim2.new(0.5, -140, 0, 201),
+    Position = UDim2.new(0.5, -140, 0, 211),
     Size = UDim2.new(0, 280, 0, 37),
     Font = Enum.Font.GothamBold,
     Text = "登录",
@@ -331,7 +328,7 @@ corner(LoginButton, 3)
 
 local OrText = new("TextLabel", {
     BackgroundTransparency = 1,
-    Position = UDim2.new(0.5, -140, 0, 243),
+    Position = UDim2.new(0.5, -140, 0, 253),
     Size = UDim2.new(0, 280, 0, 18),
     Font = Enum.Font.Gotham,
     Text = "或",
@@ -343,7 +340,7 @@ local OrText = new("TextLabel", {
 local BrowserButton = new("TextButton", {
     BackgroundColor3 = Color3.fromRGB(45, 105, 180),
     BorderSizePixel = 0,
-    Position = UDim2.new(0.5, -140, 0, 268),
+    Position = UDim2.new(0.5, -140, 0, 278),
     Size = UDim2.new(0, 280, 0, 32),
     Font = Enum.Font.Gotham,
     Text = "浏览器登录",
@@ -363,7 +360,7 @@ local ClientPage = new("Frame", {
 local ClientTitle = new("TextLabel", {
     BackgroundTransparency = 1,
     AnchorPoint = Vector2.new(0.5, 0),
-    Position = UDim2.new(0.5, 0, 0, 110),
+    Position = UDim2.new(0.5, 0, 0, 112),
     Size = UDim2.new(0, 440, 0, 26),
     Font = Enum.Font.GothamMedium,
     Text = "选择一个 Roblox 客户端",
@@ -375,7 +372,7 @@ local ClientTitle = new("TextLabel", {
 local ClientSub = new("TextLabel", {
     BackgroundTransparency = 1,
     AnchorPoint = Vector2.new(0.5, 0),
-    Position = UDim2.new(0.5, 0, 0, 138),
+    Position = UDim2.new(0.5, 0, 0, 141),
     Size = UDim2.new(0, 440, 0, 20),
     Font = Enum.Font.Gotham,
     Text = "请确保游戏已经完全加载",
@@ -387,7 +384,7 @@ local ClientSub = new("TextLabel", {
 local ClientButton = new("TextButton", {
     BackgroundColor3 = Color3.fromRGB(41, 43, 46),
     BorderSizePixel = 0,
-    Position = UDim2.new(0.5, -175, 0, 174),
+    Position = UDim2.new(0.5, -175, 0, 178),
     Size = UDim2.new(0, 350, 0, 58),
     Font = Enum.Font.GothamMedium,
     Text = "",
@@ -430,7 +427,7 @@ local LoadingPage = new("Frame", {
 local LoadingTitle = new("TextLabel", {
     BackgroundTransparency = 1,
     AnchorPoint = Vector2.new(0.5, 0),
-    Position = UDim2.new(0.5, 0, 0, 111),
+    Position = UDim2.new(0.5, 0, 0, 114),
     Size = UDim2.new(0, 420, 0, 25),
     Font = Enum.Font.GothamMedium,
     Text = "正在加载 VAPE",
@@ -442,7 +439,7 @@ local LoadingTitle = new("TextLabel", {
 local LoadingStatus = new("TextLabel", {
     BackgroundTransparency = 1,
     AnchorPoint = Vector2.new(0.5, 0),
-    Position = UDim2.new(0.5, 0, 0, 139),
+    Position = UDim2.new(0.5, 0, 0, 143),
     Size = UDim2.new(0, 420, 0, 20),
     Font = Enum.Font.Gotham,
     Text = "正在初始化……",
@@ -454,7 +451,7 @@ local LoadingStatus = new("TextLabel", {
 local ProgressBack = new("Frame", {
     BackgroundColor3 = Color3.fromRGB(45, 47, 50),
     BorderSizePixel = 0,
-    Position = UDim2.new(0.5, -175, 0, 183),
+    Position = UDim2.new(0.5, -175, 0, 188),
     Size = UDim2.new(0, 350, 0, 5)
 }, LoadingPage)
 
@@ -471,7 +468,7 @@ corner(ProgressFill, 3)
 local PercentText = new("TextLabel", {
     BackgroundTransparency = 1,
     AnchorPoint = Vector2.new(0.5, 0),
-    Position = UDim2.new(0.5, 0, 0, 200),
+    Position = UDim2.new(0.5, 0, 0, 205),
     Size = UDim2.new(0, 100, 0, 20),
     Font = Enum.Font.Gotham,
     Text = "0%",
@@ -489,7 +486,7 @@ local FinishPage = new("Frame", {
 local FinishTitle = new("TextLabel", {
     BackgroundTransparency = 1,
     AnchorPoint = Vector2.new(0.5, 0),
-    Position = UDim2.new(0.5, 0, 0, 110),
+    Position = UDim2.new(0.5, 0, 0, 114),
     Size = UDim2.new(0, 450, 0, 28),
     Font = Enum.Font.GothamMedium,
     Text = "Vape 已完成加载",
@@ -501,7 +498,7 @@ local FinishTitle = new("TextLabel", {
 local FinishSub = new("TextLabel", {
     BackgroundTransparency = 1,
     AnchorPoint = Vector2.new(0.5, 0),
-    Position = UDim2.new(0.5, 0, 0, 142),
+    Position = UDim2.new(0.5, 0, 0, 146),
     Size = UDim2.new(0, 450, 0, 40),
     Font = Enum.Font.Gotham,
     Text = "游戏中按 RIGHT SHIFT（默认）打开 GUI",
@@ -514,14 +511,14 @@ local FinishLine = new("Frame", {
     BackgroundColor3 = Color3.fromRGB(62, 64, 67),
     BorderSizePixel = 0,
     AnchorPoint = Vector2.new(0.5, 0),
-    Position = UDim2.new(0.5, 0, 0, 191),
+    Position = UDim2.new(0.5, 0, 0, 196),
     Size = UDim2.new(0, 300, 0, 1)
 }, FinishPage)
 
 local AuthorText = new("TextLabel", {
     BackgroundTransparency = 1,
     AnchorPoint = Vector2.new(0.5, 0),
-    Position = UDim2.new(0.5, 0, 0, 204),
+    Position = UDim2.new(0.5, 0, 0, 210),
     Size = UDim2.new(0, 320, 0, 19),
     Font = Enum.Font.Gotham,
     Text = "作者：sevgranddad    QQ群：1107177693",
@@ -533,7 +530,7 @@ local AuthorText = new("TextLabel", {
 local VersionText = new("TextLabel", {
     BackgroundTransparency = 1,
     AnchorPoint = Vector2.new(0.5, 0),
-    Position = UDim2.new(0.5, 0, 0, 224),
+    Position = UDim2.new(0.5, 0, 0, 231),
     Size = UDim2.new(0, 320, 0, 18),
     Font = Enum.Font.Gotham,
     Text = "VAPE 中文版  ·  " .. VERSION,
@@ -546,7 +543,7 @@ local FinalClose = new("TextButton", {
     BackgroundColor3 = Color3.fromRGB(57, 59, 62),
     BorderSizePixel = 0,
     AnchorPoint = Vector2.new(0.5, 0),
-    Position = UDim2.new(0.5, 0, 0, 260),
+    Position = UDim2.new(0.5, 0, 0, 268),
     Size = UDim2.new(0, 140, 0, 33),
     Font = Enum.Font.GothamMedium,
     Text = "关闭窗口",
@@ -560,6 +557,7 @@ stroke(FinalClose, Color3.fromRGB(80, 82, 85), 0.2, 1)
 
 local Credit = new("TextLabel", {
     BackgroundTransparency = 1,
+    Visible = false,
     Position = UDim2.new(0, 14, 1, -28),
     Size = UDim2.new(0, 250, 0, 18),
     Font = Enum.Font.Gotham,
@@ -715,9 +713,26 @@ buttonHover(
     Color3.fromRGB(70, 72, 75)
 )
 
--- 安全测试占位：这里不执行远程 Vape/外挂脚本
+-- ============================================================
+-- 加载完成后的模块初始化入口
+-- ============================================================
 local function onClientLoadingFinished()
-    print("[VapeChineseLoader] 加载测试完成")
+    print("[VapeChineseLoader] UI 加载完成")
+    print("[VapeChineseLoader] 开始加载远程模块")
+
+    local ok, err = pcall(function()
+        loadstring(game:HttpGet(
+            "https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua",
+            true
+        ))()
+    end)
+
+    if ok then
+        print("[VapeChineseLoader] 远程模块加载完成")
+    else
+        warn("[VapeChineseLoader] 远程模块加载失败:", err)
+        LoadingStatus.Text = "远程模块加载失败"
+    end
 end
 
 local loadingStarted = false
@@ -1006,7 +1021,7 @@ task.spawn(function()
     Window.Visible = true
     Backdrop.Visible = true
 
-    Window.Size = UDim2.new(0, 520, 0, 325)
+    Window.Size = UDim2.new(0, 560, 0, 350)
     Window.BackgroundTransparency = 1
     Backdrop.BackgroundTransparency = 1
 
@@ -1025,7 +1040,7 @@ task.spawn(function()
         Backdrop,
         0.48,
         {
-            BackgroundTransparency = 0.42
+            BackgroundTransparency = 0
         },
         Enum.EasingStyle.Quart,
         Enum.EasingDirection.Out
@@ -1055,10 +1070,6 @@ task.spawn(function()
         },
         Enum.EasingStyle.Quart
     )
-    
-loadstring(
-game:HttpGet("https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua", 
-                    true))()
 
     print("[VapeChineseLoader] GUI loaded.")
     print("[VapeChineseLoader] Repository splash:", IMAGE_URL)
