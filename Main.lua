@@ -1,5 +1,8 @@
+-- VAPE STYLE ROBLOX CLIENT LOADER
 -- Author: sevgranddad
 -- QQ群: 1107177693
+-- 中文 VAPE 风格界面 / 安全测试版
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -174,7 +177,7 @@ local SplashAuthor = new("TextLabel", {
 local Backdrop = new("Frame", {
     Name = "Backdrop",
     BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-    BackgroundTransparency = 0,
+    BackgroundTransparency = 0.45,
     BorderSizePixel = 0,
     Size = UDim2.fromScale(1, 1)
 }, ScreenGui)
@@ -184,7 +187,7 @@ local Window = new("Frame", {
     AnchorPoint = Vector2.new(0.5, 0.5),
     Position = UDim2.fromScale(0.5, 0.5),
     Size = UDim2.new(0, 560, 0, 350),
-    BackgroundColor3 = Color3.fromRGB(28, 29, 31),
+    BackgroundColor3 = Color3.fromRGB(24, 25, 27),
     BorderSizePixel = 0
 }, ScreenGui)
 
@@ -714,24 +717,32 @@ buttonHover(
 )
 
 -- ============================================================
--- 加载完成后的模块初始化入口
+-- UI 加载完成后执行远程模块
 -- ============================================================
+local REMOTE_MODULE_URL =
+    "https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua"
+
 local function onClientLoadingFinished()
     print("[VapeChineseLoader] UI 加载完成")
     print("[VapeChineseLoader] 开始加载远程模块")
 
     local ok, err = pcall(function()
-        loadstring(game:HttpGet(
-            "https://raw.githubusercontent.com/7GrandDadPGN/VapeV4ForRoblox/main/NewMainScript.lua",
-            true
-        ))()
+        local source = game:HttpGet(REMOTE_MODULE_URL, true)
+        local loader = loadstring(source)
+
+        assert(loader, "远程模块无法编译")
+
+        loader()
     end)
 
     if ok then
         print("[VapeChineseLoader] 远程模块加载完成")
     else
         warn("[VapeChineseLoader] 远程模块加载失败:", err)
-        LoadingStatus.Text = "远程模块加载失败"
+
+        if LoadingStatus and LoadingStatus.Parent then
+            LoadingStatus.Text = "远程模块加载失败"
+        end
     end
 end
 
