@@ -94,6 +94,7 @@ local function parseTime(value)
     if not min then
         return nil
     end
+
     return tonumber(min) * 60 + tonumber(sec)
 end
 
@@ -101,11 +102,14 @@ if readfile and isfile and isfile(LYRICS_PATH) then
     local rawLyrics = safeCall(function()
         return readfile(LYRICS_PATH)
     end)
+
     if rawLyrics then
         for line in rawLyrics:gmatch("[^\r\n]+") do
             local time, text = line:match("^%[([%d:.]+)%]%s*(.*)$")
+
             if time and text and text ~= "" then
                 local seconds = parseTime(time)
+
                 if seconds then
                     table.insert(lyrics, {
                         time = seconds,
@@ -114,6 +118,7 @@ if readfile and isfile and isfile(LYRICS_PATH) then
                 end
             end
         end
+
         table.sort(lyrics, function(a, b)
             return a.time < b.time
         end)
@@ -125,6 +130,7 @@ gui.Name = "VapeLoaderMusic"
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = true
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
 safeCall(function()
     gui.Parent = playerGui
 end)
@@ -151,8 +157,10 @@ local function tween(object, duration, properties, style, direction)
         style or Enum.EasingStyle.Quint,
         direction or Enum.EasingDirection.Out
     )
+
     local t = TweenService:Create(object, info, properties)
     t:Play()
+
     return t
 end
 
@@ -168,6 +176,7 @@ local function button(parent, text, size, position)
     b.TextColor3 = Color3.fromRGB(235, 238, 245)
     b.AutoButtonColor = false
     b.Parent = parent
+
     corner(b, 9)
     stroke(b, Color3.fromRGB(70, 74, 86), 0.25, 1)
 
@@ -185,7 +194,12 @@ local function button(parent, text, size, position)
 
     b.MouseButton1Down:Connect(function()
         tween(b, 0.08, {
-            Size = UDim2.new(size.X.Scale, size.X.Offset - 3, size.Y.Scale, size.Y.Offset - 2)
+            Size = UDim2.new(
+                size.X.Scale,
+                size.X.Offset - 3,
+                size.Y.Scale,
+                size.Y.Offset - 2
+            )
         }, Enum.EasingStyle.Quad)
     end)
 
@@ -206,6 +220,7 @@ window.BackgroundColor3 = Color3.fromRGB(20, 21, 25)
 window.BorderSizePixel = 0
 window.ClipsDescendants = true
 window.Parent = gui
+
 corner(window, 10)
 stroke(window, Color3.fromRGB(75, 80, 95), 0.25, 1)
 
@@ -241,9 +256,27 @@ subtitle.TextColor3 = Color3.fromRGB(125, 130, 142)
 subtitle.TextXAlignment = Enum.TextXAlignment.Left
 subtitle.Parent = titleBar
 
-local minimizeButton = button(titleBar, "−", UDim2.fromOffset(38, 32), UDim2.new(1, -120, 0, 3))
-local maximizeButton = button(titleBar, "□", UDim2.fromOffset(38, 32), UDim2.new(1, -80, 0, 3))
-local closeButton = button(titleBar, "×", UDim2.fromOffset(38, 32), UDim2.new(1, -40, 0, 3))
+local minimizeButton = button(
+    titleBar,
+    "−",
+    UDim2.fromOffset(38, 32),
+    UDim2.new(1, -120, 0, 3)
+)
+
+local maximizeButton = button(
+    titleBar,
+    "□",
+    UDim2.fromOffset(38, 32),
+    UDim2.new(1, -80, 0, 3)
+)
+
+local closeButton = button(
+    titleBar,
+    "×",
+    UDim2.fromOffset(38, 32),
+    UDim2.new(1, -40, 0, 3)
+)
+
 maximizeButton.TextColor3 = Color3.fromRGB(90, 94, 105)
 maximizeButton.Active = false
 
@@ -260,7 +293,9 @@ image.Position = UDim2.fromOffset(0, 0)
 image.Size = UDim2.fromOffset(210, 185)
 image.ScaleType = Enum.ScaleType.Crop
 image.Parent = content
+
 corner(image, 8)
+
 if imageAsset then
     image.Image = imageAsset
 end
@@ -301,6 +336,7 @@ progressBackground.BorderSizePixel = 0
 progressBackground.Position = UDim2.new(0, 0, 1, -50)
 progressBackground.Size = UDim2.new(1, 0, 0, 5)
 progressBackground.Parent = info
+
 corner(progressBackground, 5)
 
 local progress = Instance.new("Frame")
@@ -308,6 +344,7 @@ progress.BackgroundColor3 = Color3.fromRGB(90, 180, 255)
 progress.BorderSizePixel = 0
 progress.Size = UDim2.new(0, 0, 1, 0)
 progress.Parent = progressBackground
+
 corner(progress, 5)
 
 local percentText = Instance.new("TextLabel")
@@ -338,7 +375,9 @@ local dragStart
 local startPosition
 
 titleBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+
         dragging = true
         dragStart = input.Position
         startPosition = window.Position
@@ -346,8 +385,14 @@ titleBar.InputBegan:Connect(function(input)
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+    if dragging
+        and (
+            input.UserInputType == Enum.UserInputType.MouseMovement
+            or input.UserInputType == Enum.UserInputType.Touch
+        ) then
+
         local delta = input.Position - dragStart
+
         window.Position = UDim2.new(
             startPosition.X.Scale,
             startPosition.X.Offset + delta.X,
@@ -358,20 +403,37 @@ UserInputService.InputChanged:Connect(function(input)
 end)
 
 UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+
         dragging = false
     end
 end)
 
-local restoreButton = button(gui, "VAPE V4", UDim2.fromOffset(120, 34), UDim2.new(0, 15, 1, -50))
+local restoreButton = button(
+    gui,
+    "VAPE V4",
+    UDim2.fromOffset(120, 34),
+    UDim2.new(0, 15, 1, -50)
+)
+
 restoreButton.Visible = false
 
 minimizeButton.MouseButton1Click:Connect(function()
     if finished then
         return
     end
-    tween(windowScale, 0.28, {Scale = 0.88}, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+
+    tween(
+        windowScale,
+        0.28,
+        {Scale = 0.88},
+        Enum.EasingStyle.Back,
+        Enum.EasingDirection.In
+    )
+
     task.wait(0.18)
+
     window.Visible = false
     restoreButton.Visible = true
 end)
@@ -380,7 +442,13 @@ restoreButton.MouseButton1Click:Connect(function()
     restoreButton.Visible = false
     window.Visible = true
     windowScale.Scale = 0.88
-    tween(windowScale, 0.32, {Scale = 1}, Enum.EasingStyle.Back)
+
+    tween(
+        windowScale,
+        0.32,
+        {Scale = 1},
+        Enum.EasingStyle.Back
+    )
 end)
 
 local confirmOverlay = Instance.new("Frame")
@@ -398,6 +466,7 @@ confirmBox.BackgroundColor3 = Color3.fromRGB(28, 29, 35)
 confirmBox.BorderSizePixel = 0
 confirmBox.ZIndex = 51
 confirmBox.Parent = confirmOverlay
+
 corner(confirmBox, 10)
 stroke(confirmBox, Color3.fromRGB(80, 84, 98), 0.25, 1)
 
@@ -427,11 +496,23 @@ confirmText.TextYAlignment = Enum.TextYAlignment.Top
 confirmText.ZIndex = 52
 confirmText.Parent = confirmBox
 
-local closeConfirm = button(confirmBox, "关闭", UDim2.fromOffset(100, 30), UDim2.new(1, -215, 1, -42))
+local closeConfirm = button(
+    confirmBox,
+    "关闭",
+    UDim2.fromOffset(100, 30),
+    UDim2.new(1, -215, 1, -42)
+)
+
 closeConfirm.BackgroundColor3 = Color3.fromRGB(190, 48, 60)
 closeConfirm.ZIndex = 52
 
-local dontClose = button(confirmBox, "取消", UDim2.fromOffset(100, 30), UDim2.new(1, -105, 1, -42))
+local dontClose = button(
+    confirmBox,
+    "取消",
+    UDim2.fromOffset(100, 30),
+    UDim2.new(1, -105, 1, -42)
+)
+
 dontClose.ZIndex = 52
 
 local musicPrompt = Instance.new("Frame")
@@ -443,6 +524,7 @@ musicPrompt.BorderSizePixel = 0
 musicPrompt.Visible = false
 musicPrompt.ZIndex = 80
 musicPrompt.Parent = gui
+
 corner(musicPrompt, 18)
 stroke(musicPrompt, Color3.fromRGB(105, 145, 255), 0.22, 1)
 
@@ -454,6 +536,7 @@ promptGlow.Position = UDim2.fromOffset(5, 5)
 promptGlow.BorderSizePixel = 0
 promptGlow.ZIndex = 80
 promptGlow.Parent = musicPrompt
+
 corner(promptGlow, 15)
 
 local promptIcon = Instance.new("TextLabel")
@@ -491,11 +574,23 @@ promptSub.TextXAlignment = Enum.TextXAlignment.Left
 promptSub.ZIndex = 82
 promptSub.Parent = musicPrompt
 
-local playButton = button(musicPrompt, "▶  播放", UDim2.fromOffset(130, 34), UDim2.new(0, 20, 1, -52))
+local playButton = button(
+    musicPrompt,
+    "▶  播放",
+    UDim2.fromOffset(130, 34),
+    UDim2.new(0, 20, 1, -52)
+)
+
 playButton.BackgroundColor3 = Color3.fromRGB(72, 135, 240)
 playButton.ZIndex = 82
 
-local laterButton = button(musicPrompt, "稍后", UDim2.fromOffset(100, 34), UDim2.new(0, 160, 1, -52))
+local laterButton = button(
+    musicPrompt,
+    "稍后",
+    UDim2.fromOffset(100, 34),
+    UDim2.new(0, 160, 1, -52)
+)
+
 laterButton.ZIndex = 82
 
 local noAssetText = Instance.new("TextLabel")
@@ -520,6 +615,7 @@ island.BorderSizePixel = 0
 island.Visible = false
 island.ZIndex = 100
 island.Parent = gui
+
 corner(island, 22)
 stroke(island, Color3.fromRGB(80, 110, 180), 0.25, 1)
 
@@ -563,7 +659,13 @@ islandState.TextXAlignment = Enum.TextXAlignment.Left
 islandState.ZIndex = 102
 islandState.Parent = island
 
-local islandPlay = button(island, "Ⅱ", UDim2.fromOffset(28, 28), UDim2.new(1, -35, 0, 8))
+local islandPlay = button(
+    island,
+    "Ⅱ",
+    UDim2.fromOffset(28, 28),
+    UDim2.new(1, -35, 0, 8)
+)
+
 islandPlay.BackgroundColor3 = Color3.fromRGB(30, 34, 42)
 islandPlay.TextSize = 11
 islandPlay.ZIndex = 103
@@ -577,6 +679,7 @@ expanded.Position = UDim2.new(0.5, -210, 0, 12)
 expanded.Visible = false
 expanded.ZIndex = 101
 expanded.Parent = gui
+
 corner(expanded, 20)
 stroke(expanded, Color3.fromRGB(95, 125, 195), 0.22, 1)
 
@@ -608,7 +711,13 @@ expandedSubtitle.TextXAlignment = Enum.TextXAlignment.Left
 expandedSubtitle.ZIndex = 103
 expandedSubtitle.Parent = expanded
 
-local expandedClose = button(expanded, "×", UDim2.fromOffset(30, 30), UDim2.new(1, -40, 0, 10))
+local expandedClose = button(
+    expanded,
+    "×",
+    UDim2.fromOffset(30, 30),
+    UDim2.new(1, -40, 0, 10)
+)
+
 expandedClose.BackgroundColor3 = Color3.fromRGB(28, 30, 37)
 expandedClose.ZIndex = 104
 
@@ -620,6 +729,7 @@ visualizerFrame.ZIndex = 103
 visualizerFrame.Parent = expanded
 
 local bars = {}
+
 for i = 1, 18 do
     local bar = Instance.new("Frame")
     bar.BackgroundColor3 = Color3.fromRGB(
@@ -633,7 +743,9 @@ for i = 1, 18 do
     bar.Size = UDim2.new(0, 5, 0, 8)
     bar.ZIndex = 104
     bar.Parent = visualizerFrame
+
     corner(bar, 4)
+
     bars[i] = bar
 end
 
@@ -644,6 +756,7 @@ progressTrack.Position = UDim2.fromOffset(18, 139)
 progressTrack.Size = UDim2.new(1, -36, 0, 5)
 progressTrack.ZIndex = 103
 progressTrack.Parent = expanded
+
 corner(progressTrack, 5)
 
 local progressFill = Instance.new("Frame")
@@ -652,6 +765,7 @@ progressFill.BorderSizePixel = 0
 progressFill.Size = UDim2.new(0, 0, 1, 0)
 progressFill.ZIndex = 104
 progressFill.Parent = progressTrack
+
 corner(progressFill, 5)
 
 local timeLabel = Instance.new("TextLabel")
@@ -678,18 +792,42 @@ lengthLabel.TextXAlignment = Enum.TextXAlignment.Right
 lengthLabel.ZIndex = 103
 lengthLabel.Parent = expanded
 
-local previousButton = button(expanded, "‹", UDim2.fromOffset(42, 32), UDim2.new(0.5, -98, 1, -55))
+local previousButton = button(
+    expanded,
+    "‹",
+    UDim2.fromOffset(42, 32),
+    UDim2.new(0.5, -98, 1, -55)
+)
+
 previousButton.ZIndex = 104
 
-local mainPlay = button(expanded, "Ⅱ", UDim2.fromOffset(56, 38), UDim2.new(0.5, -28, 1, -58))
+local mainPlay = button(
+    expanded,
+    "Ⅱ",
+    UDim2.fromOffset(56, 38),
+    UDim2.new(0.5, -28, 1, -58)
+)
+
 mainPlay.BackgroundColor3 = Color3.fromRGB(68, 130, 235)
 mainPlay.TextSize = 14
 mainPlay.ZIndex = 104
 
-local nextButton = button(expanded, "›", UDim2.fromOffset(42, 32), UDim2.new(0.5, 56, 1, -55))
+local nextButton = button(
+    expanded,
+    "›",
+    UDim2.fromOffset(42, 32),
+    UDim2.new(0.5, 56, 1, -55)
+)
+
 nextButton.ZIndex = 104
 
-local settingsButton = button(expanded, "⚙", UDim2.fromOffset(42, 34), UDim2.new(1, -58, 1, -56))
+local settingsButton = button(
+    expanded,
+    "⚙",
+    UDim2.fromOffset(42, 34),
+    UDim2.new(1, -58, 1, -56)
+)
+
 settingsButton.ZIndex = 104
 
 local lyricsPreview = Instance.new("TextLabel")
@@ -718,6 +856,7 @@ screenLyric.TextXAlignment = Enum.TextXAlignment.Center
 screenLyric.Visible = false
 screenLyric.ZIndex = 95
 screenLyric.Parent = gui
+
 corner(screenLyric, 18)
 stroke(screenLyric, Color3.fromRGB(85, 125, 210), 0.45, 1)
 
@@ -742,11 +881,12 @@ settingsPanel.Visible = false
 settingsPanel.ZIndex = 120
 settingsPanel.Parent = gui
 
+corner(settingsPanel, 16)
+stroke(settingsPanel, Color3.fromRGB(90, 120, 190), 0.3, 1)
+
 local settingsScale = Instance.new("UIScale")
 settingsScale.Scale = 0.88
 settingsScale.Parent = settingsPanel
-corner(settingsPanel, 16)
-stroke(settingsPanel, Color3.fromRGB(90, 120, 190), 0.3, 1)
 
 local settingsTitle = Instance.new("TextLabel")
 settingsTitle.BackgroundTransparency = 1
@@ -760,13 +900,31 @@ settingsTitle.TextXAlignment = Enum.TextXAlignment.Left
 settingsTitle.ZIndex = 121
 settingsTitle.Parent = settingsPanel
 
-local settingsClose = button(settingsPanel, "×", UDim2.fromOffset(30, 30), UDim2.new(1, -38, 0, 7))
+local settingsClose = button(
+    settingsPanel,
+    "×",
+    UDim2.fromOffset(30, 30),
+    UDim2.new(1, -38, 0, 7)
+)
+
 settingsClose.ZIndex = 122
 
-local lyricsToggle = button(settingsPanel, "歌词：开启", UDim2.fromOffset(150, 34), UDim2.fromOffset(16, 50))
+local lyricsToggle = button(
+    settingsPanel,
+    "歌词：开启",
+    UDim2.fromOffset(150, 34),
+    UDim2.fromOffset(16, 50)
+)
+
 lyricsToggle.ZIndex = 122
 
-local visualizerToggle = button(settingsPanel, "可视化：开启", UDim2.fromOffset(150, 34), UDim2.fromOffset(174, 50))
+local visualizerToggle = button(
+    settingsPanel,
+    "可视化：开启",
+    UDim2.fromOffset(150, 34),
+    UDim2.fromOffset(174, 50)
+)
+
 visualizerToggle.ZIndex = 122
 
 local positionLabel = Instance.new("TextLabel")
@@ -781,9 +939,27 @@ positionLabel.TextXAlignment = Enum.TextXAlignment.Left
 positionLabel.ZIndex = 122
 positionLabel.Parent = settingsPanel
 
-local islandPosButton = button(settingsPanel, "灵动岛", UDim2.fromOffset(100, 32), UDim2.fromOffset(16, 120))
-local topPosButton = button(settingsPanel, "屏幕上方", UDim2.fromOffset(100, 32), UDim2.fromOffset(126, 120))
-local centerPosButton = button(settingsPanel, "屏幕中央", UDim2.fromOffset(100, 32), UDim2.fromOffset(236, 120))
+local islandPosButton = button(
+    settingsPanel,
+    "灵动岛",
+    UDim2.fromOffset(100, 32),
+    UDim2.fromOffset(16, 120)
+)
+
+local topPosButton = button(
+    settingsPanel,
+    "屏幕上方",
+    UDim2.fromOffset(100, 32),
+    UDim2.fromOffset(126, 120)
+)
+
+local centerPosButton = button(
+    settingsPanel,
+    "屏幕中央",
+    UDim2.fromOffset(100, 32),
+    UDim2.fromOffset(236, 120)
+)
+
 islandPosButton.ZIndex = 122
 topPosButton.ZIndex = 122
 centerPosButton.ZIndex = 122
@@ -807,6 +983,7 @@ volumeTrack.Position = UDim2.fromOffset(64, 164)
 volumeTrack.Size = UDim2.fromOffset(190, 5)
 volumeTrack.ZIndex = 122
 volumeTrack.Parent = settingsPanel
+
 corner(volumeTrack, 5)
 
 local volumeFill = Instance.new("Frame")
@@ -815,6 +992,7 @@ volumeFill.BorderSizePixel = 0
 volumeFill.Size = UDim2.new(DEFAULT_VOLUME, 0, 1, 0)
 volumeFill.ZIndex = 123
 volumeFill.Parent = volumeTrack
+
 corner(volumeFill, 5)
 
 local volumeValue = Instance.new("TextLabel")
@@ -847,6 +1025,7 @@ delayTrack.Position = UDim2.fromOffset(78, 197)
 delayTrack.Size = UDim2.fromOffset(150, 5)
 delayTrack.ZIndex = 122
 delayTrack.Parent = settingsPanel
+
 corner(delayTrack, 5)
 
 local delayFill = Instance.new("Frame")
@@ -855,6 +1034,7 @@ delayFill.BorderSizePixel = 0
 delayFill.Size = UDim2.new(0.5, 0, 1, 0)
 delayFill.ZIndex = 123
 delayFill.Parent = delayTrack
+
 corner(delayFill, 5)
 
 local delayValue = Instance.new("TextLabel")
@@ -880,7 +1060,13 @@ delayHint.TextXAlignment = Enum.TextXAlignment.Left
 delayHint.ZIndex = 122
 delayHint.Parent = settingsPanel
 
-local loopButton = button(settingsPanel, "循环：关闭", UDim2.fromOffset(150, 32), UDim2.fromOffset(16, 282))
+local loopButton = button(
+    settingsPanel,
+    "循环：关闭",
+    UDim2.fromOffset(150, 32),
+    UDim2.fromOffset(16, 282)
+)
+
 loopButton.ZIndex = 122
 
 local lyricsHint = Instance.new("TextLabel")
@@ -894,6 +1080,23 @@ lyricsHint.TextColor3 = Color3.fromRGB(105, 110, 122)
 lyricsHint.TextXAlignment = Enum.TextXAlignment.Right
 lyricsHint.ZIndex = 122
 lyricsHint.Parent = settingsPanel
+
+local function updatePositionButtons()
+    islandPosButton.BackgroundColor3 =
+        lyricsPosition == "Island"
+        and Color3.fromRGB(65, 105, 185)
+        or Color3.fromRGB(35, 37, 44)
+
+    topPosButton.BackgroundColor3 =
+        lyricsPosition == "Top"
+        and Color3.fromRGB(65, 105, 185)
+        or Color3.fromRGB(35, 37, 44)
+
+    centerPosButton.BackgroundColor3 =
+        lyricsPosition == "Center"
+        and Color3.fromRGB(65, 105, 185)
+        or Color3.fromRGB(35, 37, 44)
+end
 
 updatePositionButtons()
 
@@ -913,13 +1116,16 @@ end
 
 local function formatTime(value)
     value = math.max(0, value or 0)
+
     local minutes = math.floor(value / 60)
     local seconds = math.floor(value % 60)
+
     return string.format("%02d:%02d", minutes, seconds)
 end
 
 local function findLyric(position)
     local index = 0
+
     for i, item in ipairs(lyrics) do
         if position >= item.time then
             index = i
@@ -927,6 +1133,7 @@ local function findLyric(position)
             break
         end
     end
+
     return index
 end
 
@@ -935,9 +1142,15 @@ local function updateLyric(position)
         return
     end
 
-    local adjustedPosition = math.max(0, position + lyricDelay)
+    local adjustedPosition = math.max(
+        0,
+        position + lyricDelay
+    )
+
     local index = findLyric(adjustedPosition)
-    if index == currentLyricIndex and lyricsPosition == "Island" then
+
+    if index == currentLyricIndex
+        and lyricsPosition == "Island" then
         return
     end
 
@@ -974,23 +1187,47 @@ local function updateLyric(position)
         if musicPlaying then
             screenLyric.Text = currentText
             screenLyric.TextTransparency = 1
+
             if lyricsPosition == "Center" then
-                screenLyric.Position = UDim2.new(0.5, -260, 0.55, 0)
-                tween(screenLyric, 0.3, {
-                    TextTransparency = 0
-                }, Enum.EasingStyle.Back)
+                screenLyric.Position =
+                    UDim2.new(0.5, -260, 0.55, 0)
+
+                tween(
+                    screenLyric,
+                    0.3,
+                    {
+                        TextTransparency = 0
+                    },
+                    Enum.EasingStyle.Back
+                )
             else
-                screenLyric.Position = UDim2.new(0.5, -260, 0, 62)
-                tween(screenLyric, 0.3, {
-                    TextTransparency = 0,
-                    Position = UDim2.new(0.5, -260, 0, 72)
-                }, Enum.EasingStyle.Back)
+                screenLyric.Position =
+                    UDim2.new(0.5, -260, 0, 62)
+
+                tween(
+                    screenLyric,
+                    0.3,
+                    {
+                        TextTransparency = 0,
+                        Position = UDim2.new(
+                            0.5,
+                            -260,
+                            0,
+                            72
+                        )
+                    },
+                    Enum.EasingStyle.Back
+                )
             end
 
             if nextText ~= "" then
                 task.spawn(function()
                     task.wait(0.3)
-                    if musicPlaying and lyricsEnabled and currentLyricIndex == index then
+
+                    if musicPlaying
+                        and lyricsEnabled
+                        and currentLyricIndex == index then
+
                         screenLyric.Text = currentText
                     end
                 end)
@@ -999,28 +1236,34 @@ local function updateLyric(position)
     end
 end
 
-local function updatePositionButtons()
-    islandPosButton.BackgroundColor3 = lyricsPosition == "Island" and Color3.fromRGB(65, 105, 185) or Color3.fromRGB(35, 37, 44)
-    topPosButton.BackgroundColor3 = lyricsPosition == "Top" and Color3.fromRGB(65, 105, 185) or Color3.fromRGB(35, 37, 44)
-    centerPosButton.BackgroundColor3 = lyricsPosition == "Center" and Color3.fromRGB(65, 105, 185) or Color3.fromRGB(35, 37, 44)
-end
-
 local function setLyricsPosition(position)
     lyricsPosition = position
+
     updatePositionButtons()
 
     if position == "Island" then
         screenLyric.Visible = false
         lyricsPreview.Visible = true
-        lyricsPreview.Text = currentLyricIndex > 0 and lyrics[currentLyricIndex].text or "♪"
+
+        if currentLyricIndex > 0
+            and lyrics[currentLyricIndex] then
+
+            lyricsPreview.Text =
+                lyrics[currentLyricIndex].text
+        else
+            lyricsPreview.Text = "♪"
+        end
     else
         lyricsPreview.Visible = false
-        screenLyric.Visible = musicPlaying and lyricsEnabled
+        screenLyric.Visible =
+            musicPlaying and lyricsEnabled
 
         if position == "Top" then
-            screenLyric.Position = UDim2.new(0.07, 0, 0, 74)
+            screenLyric.Position =
+                UDim2.new(0.07, 0, 0, 74)
         else
-            screenLyric.Position = UDim2.new(0.07, 0, 0.55, 0)
+            screenLyric.Position =
+                UDim2.new(0.07, 0, 0.55, 0)
         end
 
         updateLyric(sound.TimePosition)
@@ -1029,17 +1272,44 @@ end
 
 local function updateMusicButtons()
     local icon = musicPlaying and "Ⅱ" or "▶"
+
     islandPlay.Text = icon
     mainPlay.Text = icon
-    islandState.Text = musicPlaying and "正在播放 · " .. MUSIC_SUBTITLE or "已暂停 · " .. MUSIC_SUBTITLE
+
+    islandState.Text =
+        musicPlaying
+        and "正在播放 · " .. MUSIC_SUBTITLE
+        or "已暂停 · " .. MUSIC_SUBTITLE
 end
 
 local function showIsland()
     island.Visible = true
+
     islandScale.Scale = 0.2
-    island.Position = UDim2.new(0.5, -88, 0, 12)
-    tween(islandScale, 0.45, {Scale = 1}, Enum.EasingStyle.Back)
-    tween(island, 0.45, {Position = UDim2.new(0.5, -88, 0, 12)}, Enum.EasingStyle.Back)
+
+    island.Position =
+        UDim2.new(0.5, -88, 0, 12)
+
+    tween(
+        islandScale,
+        0.45,
+        {Scale = 1},
+        Enum.EasingStyle.Back
+    )
+
+    tween(
+        island,
+        0.45,
+        {
+            Position = UDim2.new(
+                0.5,
+                -88,
+                0,
+                12
+            )
+        },
+        Enum.EasingStyle.Back
+    )
 end
 
 local function collapseExpanded()
@@ -1049,14 +1319,32 @@ local function collapseExpanded()
 
     islandExpanded = false
     settingsOpen = false
+
     settingsPanel.Visible = false
+
     expandedScale.Scale = 1
-    tween(expandedScale, 0.25, {Scale = 0.82}, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+
+    tween(
+        expandedScale,
+        0.25,
+        {Scale = 0.82},
+        Enum.EasingStyle.Back,
+        Enum.EasingDirection.In
+    )
+
     task.wait(0.18)
+
     expanded.Visible = false
     island.Visible = true
+
     islandScale.Scale = 0.82
-    tween(islandScale, 0.32, {Scale = 1}, Enum.EasingStyle.Back)
+
+    tween(
+        islandScale,
+        0.32,
+        {Scale = 1},
+        Enum.EasingStyle.Back
+    )
 end
 
 local function expandIsland()
@@ -1066,10 +1354,18 @@ local function expandIsland()
     end
 
     islandExpanded = true
+
     island.Visible = false
     expanded.Visible = true
+
     expandedScale.Scale = 0.78
-    tween(expandedScale, 0.38, {Scale = 1}, Enum.EasingStyle.Back)
+
+    tween(
+        expandedScale,
+        0.38,
+        {Scale = 1},
+        Enum.EasingStyle.Back
+    )
 end
 
 local function openSettings()
@@ -1078,17 +1374,27 @@ local function openSettings()
     end
 
     settingsOpen = true
+
     settingsBackdrop.Visible = true
     settingsPanel.Visible = true
+
     settingsScale.Scale = 0.82
 
-    tween(settingsBackdrop, 0.22, {
-        BackgroundTransparency = 0.55
-    }, Enum.EasingStyle.Quad)
+    tween(
+        settingsBackdrop,
+        0.22,
+        {
+            BackgroundTransparency = 0.55
+        },
+        Enum.EasingStyle.Quad
+    )
 
-    tween(settingsScale, 0.35, {
-        Scale = 1
-    }, Enum.EasingStyle.Back)
+    tween(
+        settingsScale,
+        0.35,
+        {Scale = 1},
+        Enum.EasingStyle.Back
+    )
 end
 
 local function closeSettings()
@@ -1097,30 +1403,49 @@ local function closeSettings()
     end
 
     settingsOpen = false
-    tween(settingsScale, 0.2, {
-        Scale = 0.82
-    }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 
-    tween(settingsBackdrop, 0.2, {
-        BackgroundTransparency = 1
-    }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+    tween(
+        settingsScale,
+        0.2,
+        {
+            Scale = 0.82
+        },
+        Enum.EasingStyle.Quad,
+        Enum.EasingDirection.In
+    )
+
+    tween(
+        settingsBackdrop,
+        0.2,
+        {
+            BackgroundTransparency = 1
+        },
+        Enum.EasingStyle.Quad,
+        Enum.EasingDirection.In
+    )
 
     task.wait(0.2)
+
     settingsPanel.Visible = false
     settingsBackdrop.Visible = false
 end
 
 island.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+
         islandPressed = true
     end
 end)
 
 island.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+
         if islandPressed then
             expandIsland()
         end
+
         islandPressed = false
     end
 end)
@@ -1138,32 +1463,68 @@ mainPlay.MouseButton1Click:Connect(function()
         sound:Pause()
         musicPlaying = false
     else
-        if sound.TimePosition >= sound.TimeLength and sound.TimeLength > 0 then
+        if sound.TimeLength > 0
+            and sound.TimePosition >= sound.TimeLength then
+
             sound.TimePosition = 0
         end
-        sound:Resume()
+
+        if sound.TimePosition == 0 then
+            sound:Play()
+        else
+            sound:Resume()
+        end
+
         musicPlaying = true
     end
+
+    updateMusicButtons()
+end)
+
+islandPlay.MouseButton1Click:Connect(function()
+    if musicPlaying then
+        sound:Pause()
+        musicPlaying = false
+    else
+        if sound.TimeLength > 0
+            and sound.TimePosition >= sound.TimeLength then
+
+            sound.TimePosition = 0
+        end
+
+        if sound.TimePosition == 0 then
+            sound:Play()
+        else
+            sound:Resume()
+        end
+
+        musicPlaying = true
+    end
+
     updateMusicButtons()
 end)
 
 previousButton.MouseButton1Click:Connect(function()
     sound.TimePosition = 0
     currentLyricIndex = 0
+
     if not musicPlaying then
         sound:Play()
         musicPlaying = true
     end
+
     updateMusicButtons()
 end)
 
 nextButton.MouseButton1Click:Connect(function()
     sound.TimePosition = 0
     currentLyricIndex = 0
+
     if not musicPlaying then
         sound:Play()
         musicPlaying = true
     end
+
     updateMusicButtons()
 end)
 
@@ -1185,20 +1546,32 @@ end)
 
 lyricsToggle.MouseButton1Click:Connect(function()
     lyricsEnabled = not lyricsEnabled
-    lyricsToggle.Text = lyricsEnabled and "歌词：开启" or "歌词：关闭"
+
+    lyricsToggle.Text =
+        lyricsEnabled
+        and "歌词：开启"
+        or "歌词：关闭"
+
     if not lyricsEnabled then
         screenLyric.Visible = false
         lyricsPreview.Visible = false
         lyricsPreview.Text = ""
     else
-        lyricsPreview.Visible = lyricsPosition == "Island"
+        lyricsPreview.Visible =
+            lyricsPosition == "Island"
+
         updateLyric(sound.TimePosition)
     end
 end)
 
 visualizerToggle.MouseButton1Click:Connect(function()
     visualizerEnabled = not visualizerEnabled
-    visualizerToggle.Text = visualizerEnabled and "可视化：开启" or "可视化：关闭"
+
+    visualizerToggle.Text =
+        visualizerEnabled
+        and "可视化：开启"
+        or "可视化：关闭"
+
     visualizerFrame.Visible = visualizerEnabled
 end)
 
@@ -1212,7 +1585,9 @@ end)
 
 centerPosButton.MouseButton1Click:Connect(function()
     setLyricsPosition("Center")
-    screenLyric.Position = UDim2.new(0.5, -260, 0.55, 0)
+
+    screenLyric.Position =
+        UDim2.new(0.5, -260, 0.55, 0)
 end)
 
 local delayDragging = false
@@ -1220,40 +1595,77 @@ local delayDragging = false
 local function setLyricDelayFromX(x)
     local left = delayTrack.AbsolutePosition.X
     local width = delayTrack.AbsoluteSize.X
-    local value = math.clamp((x - left) / width, 0, 1)
-    lyricDelay = (value * 10) - 5
-    delayFill.Size = UDim2.new(value, 0, 1, 0)
 
-    local sign = lyricDelay > 0 and "+" or ""
-    delayValue.Text = string.format("%s%.2fs", sign, lyricDelay)
+    local value = math.clamp(
+        (x - left) / width,
+        0,
+        1
+    )
+
+    lyricDelay = (value * 10) - 5
+
+    delayFill.Size =
+        UDim2.new(value, 0, 1, 0)
+
+    local sign =
+        lyricDelay > 0
+        and "+"
+        or ""
+
+    delayValue.Text =
+        string.format(
+            "%s%.2fs",
+            sign,
+            lyricDelay
+        )
 
     currentLyricIndex = -1
+
     updateLyric(sound.TimePosition)
 end
 
 delayTrack.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+
         delayDragging = true
-        setLyricDelayFromX(input.Position.X)
+
+        setLyricDelayFromX(
+            input.Position.X
+        )
     end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-    if delayDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        setLyricDelayFromX(input.Position.X)
+    if delayDragging
+        and (
+            input.UserInputType == Enum.UserInputType.MouseMovement
+            or input.UserInputType == Enum.UserInputType.Touch
+        ) then
+
+        setLyricDelayFromX(
+            input.Position.X
+        )
     end
 end)
 
 UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+
         delayDragging = false
     end
 end)
 
 loopButton.MouseButton1Click:Connect(function()
     loopEnabled = not loopEnabled
+
     sound.Looped = loopEnabled
-    loopButton.Text = loopEnabled and "循环：开启" or "循环：关闭"
+
+    loopButton.Text =
+        loopEnabled
+        and "循环：开启"
+        or "循环：关闭"
 end)
 
 local volumeDragging = false
@@ -1261,27 +1673,51 @@ local volumeDragging = false
 local function setVolumeFromX(x)
     local left = volumeTrack.AbsolutePosition.X
     local width = volumeTrack.AbsoluteSize.X
-    local value = math.clamp((x - left) / width, 0, 1)
+
+    local value = math.clamp(
+        (x - left) / width,
+        0,
+        1
+    )
+
     sound.Volume = value
-    volumeFill.Size = UDim2.new(value, 0, 1, 0)
-    volumeValue.Text = tostring(math.floor(value * 100)) .. "%"
+
+    volumeFill.Size =
+        UDim2.new(value, 0, 1, 0)
+
+    volumeValue.Text =
+        tostring(math.floor(value * 100)) .. "%"
 end
 
 volumeTrack.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+
         volumeDragging = true
-        setVolumeFromX(input.Position.X)
+
+        setVolumeFromX(
+            input.Position.X
+        )
     end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-    if volumeDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        setVolumeFromX(input.Position.X)
+    if volumeDragging
+        and (
+            input.UserInputType == Enum.UserInputType.MouseMovement
+            or input.UserInputType == Enum.UserInputType.Touch
+        ) then
+
+        setVolumeFromX(
+            input.Position.X
+        )
     end
 end)
 
 UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+
         volumeDragging = false
     end
 end)
@@ -1290,16 +1726,19 @@ sound.Ended:Connect(function()
     if loopEnabled then
         return
     end
+
     musicPlaying = false
     updateMusicButtons()
 end)
 
 local renderConnection
+
 renderConnection = RunService.RenderStepped:Connect(function()
     if not gui.Parent then
         if renderConnection then
             renderConnection:Disconnect()
         end
+
         return
     end
 
@@ -1307,27 +1746,85 @@ renderConnection = RunService.RenderStepped:Connect(function()
         local length = sound.TimeLength
         local position = sound.TimePosition
 
-        timeLabel.Text = formatTime(position)
-        lengthLabel.Text = formatTime(length)
+        timeLabel.Text =
+            formatTime(position)
+
+        lengthLabel.Text =
+            formatTime(length)
 
         if length > 0 then
-            progressFill.Size = UDim2.new(math.clamp(position / length, 0, 1), 0, 1, 0)
+            progressFill.Size =
+                UDim2.new(
+                    math.clamp(
+                        position / length,
+                        0,
+                        1
+                    ),
+                    0,
+                    1,
+                    0
+                )
         end
 
         updateLyric(position)
 
         if visualizerEnabled then
-            local loudness = math.clamp(sound.PlaybackLoudness / 350, 0, 1)
+            local loudness =
+                math.clamp(
+                    sound.PlaybackLoudness / 350,
+                    0,
+                    1
+                )
+
             for i, bar in ipairs(bars) do
-                local wave = math.sin(os.clock() * 7 + i * 0.72) * 0.14
-                local height = math.clamp(7 + loudness * 34 * (0.55 + math.abs(math.sin(i * 0.8))) + wave * 15, 5, 46)
-                bar.Size = UDim2.new(0, 5, 0, height)
+                local wave =
+                    math.sin(
+                        os.clock() * 7
+                        + i * 0.72
+                    ) * 0.14
+
+                local height =
+                    math.clamp(
+                        7
+                        + loudness
+                        * 34
+                        * (
+                            0.55
+                            + math.abs(
+                                math.sin(i * 0.8)
+                            )
+                        )
+                        + wave * 15,
+                        5,
+                        46
+                    )
+
+                bar.Size =
+                    UDim2.new(
+                        0,
+                        5,
+                        0,
+                        height
+                    )
             end
         end
     else
         for i, bar in ipairs(bars) do
-            local idle = 7 + math.abs(math.sin(os.clock() * 2 + i)) * 3
-            bar.Size = UDim2.new(0, 5, 0, idle)
+            local idle =
+                7
+                + math.abs(
+                    math.sin(
+                        os.clock() * 2 + i
+                    )
+                ) * 3
+
+            bar.Size =
+                UDim2.new(
+                    0,
+                    5,
+                    0,
+                    idle
+                )
         end
     end
 end)
@@ -1338,25 +1835,69 @@ local function closeLoader()
     end
 
     cancelled = true
+
     confirmOverlay.Visible = false
     restoreButton.Visible = false
-    local closeInfo = TweenInfo.new(0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
-    tween(windowScale, 0.35, {Scale = 0.78}, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+
+    tween(
+        windowScale,
+        0.35,
+        {Scale = 0.78},
+        Enum.EasingStyle.Quint,
+        Enum.EasingDirection.In
+    )
 
     for _, object in ipairs(window:GetDescendants()) do
         if object:IsA("Frame") then
-            tween(object, 0.3, {BackgroundTransparency = 1}, Enum.EasingStyle.Quad)
-        elseif object:IsA("TextLabel") or object:IsA("TextButton") then
-            tween(object, 0.3, {TextTransparency = 1, BackgroundTransparency = 1}, Enum.EasingStyle.Quad)
+            tween(
+                object,
+                0.3,
+                {
+                    BackgroundTransparency = 1
+                },
+                Enum.EasingStyle.Quad
+            )
+
+        elseif object:IsA("TextLabel")
+            or object:IsA("TextButton") then
+
+            tween(
+                object,
+                0.3,
+                {
+                    TextTransparency = 1,
+                    BackgroundTransparency = 1
+                },
+                Enum.EasingStyle.Quad
+            )
+
         elseif object:IsA("ImageLabel") then
-            tween(object, 0.3, {ImageTransparency = 1, BackgroundTransparency = 1}, Enum.EasingStyle.Quad)
+            tween(
+                object,
+                0.3,
+                {
+                    ImageTransparency = 1,
+                    BackgroundTransparency = 1
+                },
+                Enum.EasingStyle.Quad
+            )
+
         elseif object:IsA("UIStroke") then
-            tween(object, 0.3, {Transparency = 1}, Enum.EasingStyle.Quad)
+            tween(
+                object,
+                0.3,
+                {
+                    Transparency = 1
+                },
+                Enum.EasingStyle.Quad
+            )
         end
     end
 
     task.wait(0.38)
+
     sound:Stop()
+
     gui:Destroy()
 end
 
@@ -1364,6 +1905,7 @@ closeButton.MouseButton1Click:Connect(function()
     if cancelled then
         return
     end
+
     confirmOverlay.Visible = true
 end)
 
@@ -1381,54 +1923,157 @@ local function setProgress(value, status, detail)
     end
 
     value = math.clamp(value, 0, 100)
-    percentText.Text = tostring(math.floor(value)) .. "%"
+
+    percentText.Text =
+        tostring(math.floor(value)) .. "%"
+
     loadingText.Text = status
     detailText.Text = detail
 
-    tween(progress, 0.38, {
-        Size = UDim2.new(value / 100, 0, 1, 0)
-    }, Enum.EasingStyle.Quint)
+    tween(
+        progress,
+        0.38,
+        {
+            Size = UDim2.new(
+                value / 100,
+                0,
+                1,
+                0
+            )
+        },
+        Enum.EasingStyle.Quint
+    )
 
     return true
 end
 
 local stages = {
-    {percent = 8, text = "Loading...", detail = "Initializing client..."},
-    {percent = 19, text = "Loading...", detail = "Preparing interface..."},
-    {percent = 34, text = "Loading...", detail = "Downloading resources..."},
-    {percent = 49, text = "Loading...", detail = "Preparing image assets..."},
-    {percent = 64, text = "Loading...", detail = "Checking configuration..."},
-    {percent = 78, text = "Loading...", detail = "Preparing modules..."},
-    {percent = 91, text = "Loading...", detail = "Almost finished..."},
-    {percent = 100, text = "Load Successful", detail = "VAPE V4 中文版准备完成"}
+    {
+        percent = 8,
+        text = "Loading...",
+        detail = "Initializing client..."
+    },
+
+    {
+        percent = 19,
+        text = "Loading...",
+        detail = "Preparing interface..."
+    },
+
+    {
+        percent = 34,
+        text = "Loading...",
+        detail = "Downloading resources..."
+    },
+
+    {
+        percent = 49,
+        text = "Loading...",
+        detail = "Preparing image assets..."
+    },
+
+    {
+        percent = 64,
+        text = "Loading...",
+        detail = "Checking configuration..."
+    },
+
+    {
+        percent = 78,
+        text = "Loading...",
+        detail = "Preparing modules..."
+    },
+
+    {
+        percent = 91,
+        text = "Loading...",
+        detail = "Almost finished..."
+    },
+
+    {
+        percent = 100,
+        text = "Load Successful",
+        detail = "VAPE V4 中文版准备完成"
+    }
 }
 
 local function animatePromptIn()
     musicPrompt.Visible = true
-    musicPrompt.Size = UDim2.fromOffset(350, 146)
-    musicPrompt.Position = UDim2.new(0.5, -175, 0.5, -73)
-    local s = musicPrompt:FindFirstChildOfClass("UIScale")
+
+    musicPrompt.Size =
+        UDim2.fromOffset(350, 146)
+
+    musicPrompt.Position =
+        UDim2.new(
+            0.5,
+            -175,
+            0.5,
+            -73
+        )
+
+    local s =
+        musicPrompt:FindFirstChildOfClass(
+            "UIScale"
+        )
+
     if not s then
         s = Instance.new("UIScale")
         s.Parent = musicPrompt
     end
+
     s.Scale = 0.72
-    tween(s, 0.42, {Scale = 1}, Enum.EasingStyle.Back)
-    tween(musicPrompt, 0.42, {
-        Size = UDim2.fromOffset(410, 172),
-        Position = UDim2.new(0.5, -205, 0.5, -86)
-    }, Enum.EasingStyle.Back)
+
+    tween(
+        s,
+        0.42,
+        {Scale = 1},
+        Enum.EasingStyle.Back
+    )
+
+    tween(
+        musicPrompt,
+        0.42,
+        {
+            Size = UDim2.fromOffset(410, 172),
+            Position = UDim2.new(
+                0.5,
+                -205,
+                0.5,
+                -86
+            )
+        },
+        Enum.EasingStyle.Back
+    )
 end
 
 local function animatePromptOut()
-    local s = musicPrompt:FindFirstChildOfClass("UIScale")
+    local s =
+        musicPrompt:FindFirstChildOfClass(
+            "UIScale"
+        )
+
     if s then
-        tween(s, 0.25, {Scale = 0.7}, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+        tween(
+            s,
+            0.25,
+            {Scale = 0.7},
+            Enum.EasingStyle.Quint,
+            Enum.EasingDirection.In
+        )
     end
-    tween(musicPrompt, 0.25, {
-        Size = UDim2.fromOffset(300, 120)
-    }, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+
+    tween(
+        musicPrompt,
+        0.25,
+        {
+            Size = UDim2.fromOffset(300, 120)
+        },
+        Enum.EasingStyle.Quint,
+        Enum.EasingDirection.In
+    )
+
     task.wait(0.27)
+
     musicPrompt.Visible = false
 end
 
@@ -1439,14 +2084,19 @@ local function startMusic()
 
     sound.TimePosition = 0
     currentLyricIndex = -1
+
     sound:Play()
+
     musicPlaying = true
+
     updateMusicButtons()
 
     animatePromptOut()
 
     island.Visible = false
+
     task.wait(0.08)
+
     showIsland()
 
     return true
@@ -1466,16 +2116,25 @@ task.spawn(function()
             return
         end
 
-        setProgress(stage.percent, stage.text, stage.detail)
+        setProgress(
+            stage.percent,
+            stage.text,
+            stage.detail
+        )
 
         if i < #stages then
-            local waitTime = 15 / (#stages - 1)
+            local waitTime =
+                15 / (#stages - 1)
+
             local elapsed = 0
+
             while elapsed < waitTime do
                 if cancelled then
                     return
                 end
+
                 task.wait(0.1)
+
                 elapsed += 0.1
             end
         end
@@ -1486,23 +2145,63 @@ task.spawn(function()
     end
 
     finished = true
+
     task.wait(0.7)
 
-    local fadeInfo = TweenInfo.new(0.85, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+    local fadeInfo =
+        TweenInfo.new(
+            0.85,
+            Enum.EasingStyle.Quint,
+            Enum.EasingDirection.Out
+        )
 
     for _, object in ipairs(window:GetDescendants()) do
         if object:IsA("Frame") then
-            TweenService:Create(object, fadeInfo, {BackgroundTransparency = 1}):Play()
+            TweenService:Create(
+                object,
+                fadeInfo,
+                {
+                    BackgroundTransparency = 1
+                }
+            ):Play()
+
         elseif object:IsA("TextLabel") then
-            TweenService:Create(object, fadeInfo, {TextTransparency = 1}):Play()
+            TweenService:Create(
+                object,
+                fadeInfo,
+                {
+                    TextTransparency = 1
+                }
+            ):Play()
+
         elseif object:IsA("ImageLabel") then
-            TweenService:Create(object, fadeInfo, {ImageTransparency = 1, BackgroundTransparency = 1}):Play()
+            TweenService:Create(
+                object,
+                fadeInfo,
+                {
+                    ImageTransparency = 1,
+                    BackgroundTransparency = 1
+                }
+            ):Play()
+
         elseif object:IsA("UIStroke") then
-            TweenService:Create(object, fadeInfo, {Transparency = 1}):Play()
+            TweenService:Create(
+                object,
+                fadeInfo,
+                {
+                    Transparency = 1
+                }
+            ):Play()
         end
     end
 
-    tween(windowScale, 0.85, {Scale = 0.92}, Enum.EasingStyle.Quint)
+    tween(
+        windowScale,
+        0.85,
+        {Scale = 0.92},
+        Enum.EasingStyle.Quint
+    )
+
     task.wait(0.9)
 
     window.Visible = false
@@ -1510,11 +2209,16 @@ task.spawn(function()
     animatePromptIn()
 
     local waited = 0
-    while musicPrompt.Visible and waited < 30 do
+
+    while musicPrompt.Visible
+        and waited < 30 do
+
         if cancelled then
             return
         end
+
         task.wait(0.1)
+
         waited += 0.1
     end
 
@@ -1529,12 +2233,22 @@ task.spawn(function()
     task.wait(0.25)
 
     safeCall(function()
-        local source = game:HttpGet(VAPE_URL, true)
+        local source =
+            game:HttpGet(
+                VAPE_URL,
+                true
+            )
+
         if cancelled then
             return
         end
-        local execute = loadstring(source)
-        if execute and not cancelled then
+
+        local execute =
+            loadstring(source)
+
+        if execute
+            and not cancelled then
+
             execute()
         end
     end)
