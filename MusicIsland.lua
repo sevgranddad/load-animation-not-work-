@@ -28,10 +28,7 @@ local lyricsEnabled = true
 local visualizerEnabled = true
 local lyricsPosition = "Island"
 local loopEnabled = false
-local draggingIsland = false
 local islandPressed = false
-local dragStart
-local islandStart
 local currentLyricIndex = 0
 local lyrics = {}
 local lyricDelay = 0
@@ -570,12 +567,13 @@ local islandPlay = button(island, "Ⅱ", UDim2.fromOffset(28, 28), UDim2.new(1, 
 islandPlay.BackgroundColor3 = Color3.fromRGB(30, 34, 42)
 islandPlay.TextSize = 11
 islandPlay.ZIndex = 103
+islandPlay.Visible = false
 
 local expanded = Instance.new("Frame")
 expanded.BackgroundColor3 = Color3.fromRGB(15, 16, 21)
 expanded.BorderSizePixel = 0
-expanded.Size = UDim2.fromOffset(350, 214)
-expanded.Position = UDim2.new(0.5, -175, 0, 12)
+expanded.Size = UDim2.fromOffset(420, 270)
+expanded.Position = UDim2.new(0.5, -210, 0, 12)
 expanded.Visible = false
 expanded.ZIndex = 101
 expanded.Parent = gui
@@ -616,8 +614,8 @@ expandedClose.ZIndex = 104
 
 local visualizerFrame = Instance.new("Frame")
 visualizerFrame.BackgroundTransparency = 1
-visualizerFrame.Position = UDim2.fromOffset(18, 62)
-visualizerFrame.Size = UDim2.new(1, -36, 0, 48)
+visualizerFrame.Position = UDim2.fromOffset(18, 64)
+visualizerFrame.Size = UDim2.new(1, -36, 0, 42)
 visualizerFrame.ZIndex = 103
 visualizerFrame.Parent = expanded
 
@@ -642,7 +640,7 @@ end
 local progressTrack = Instance.new("Frame")
 progressTrack.BackgroundColor3 = Color3.fromRGB(45, 48, 58)
 progressTrack.BorderSizePixel = 0
-progressTrack.Position = UDim2.fromOffset(18, 120)
+progressTrack.Position = UDim2.fromOffset(18, 139)
 progressTrack.Size = UDim2.new(1, -36, 0, 5)
 progressTrack.ZIndex = 103
 progressTrack.Parent = expanded
@@ -658,7 +656,7 @@ corner(progressFill, 5)
 
 local timeLabel = Instance.new("TextLabel")
 timeLabel.BackgroundTransparency = 1
-timeLabel.Position = UDim2.fromOffset(18, 128)
+timeLabel.Position = UDim2.fromOffset(18, 147)
 timeLabel.Size = UDim2.fromOffset(55, 16)
 timeLabel.Font = Enum.Font.Code
 timeLabel.Text = "00:00"
@@ -670,7 +668,7 @@ timeLabel.Parent = expanded
 
 local lengthLabel = Instance.new("TextLabel")
 lengthLabel.BackgroundTransparency = 1
-lengthLabel.Position = UDim2.new(1, -73, 0, 128)
+lengthLabel.Position = UDim2.new(1, -73, 0, 147)
 lengthLabel.Size = UDim2.fromOffset(55, 16)
 lengthLabel.Font = Enum.Font.Code
 lengthLabel.Text = "00:00"
@@ -680,24 +678,24 @@ lengthLabel.TextXAlignment = Enum.TextXAlignment.Right
 lengthLabel.ZIndex = 103
 lengthLabel.Parent = expanded
 
-local previousButton = button(expanded, "‹", UDim2.fromOffset(42, 32), UDim2.new(0.5, -88, 1, -52))
+local previousButton = button(expanded, "‹", UDim2.fromOffset(42, 32), UDim2.new(0.5, -98, 1, -55))
 previousButton.ZIndex = 104
 
-local mainPlay = button(expanded, "Ⅱ", UDim2.fromOffset(52, 36), UDim2.new(0.5, -26, 1, -54))
+local mainPlay = button(expanded, "Ⅱ", UDim2.fromOffset(56, 38), UDim2.new(0.5, -28, 1, -58))
 mainPlay.BackgroundColor3 = Color3.fromRGB(68, 130, 235)
 mainPlay.TextSize = 14
 mainPlay.ZIndex = 104
 
-local nextButton = button(expanded, "›", UDim2.fromOffset(42, 32), UDim2.new(0.5, 46, 1, -52))
+local nextButton = button(expanded, "›", UDim2.fromOffset(42, 32), UDim2.new(0.5, 56, 1, -55))
 nextButton.ZIndex = 104
 
-local settingsButton = button(expanded, "⚙", UDim2.fromOffset(38, 32), UDim2.new(1, -55, 1, -52))
+local settingsButton = button(expanded, "⚙", UDim2.fromOffset(42, 34), UDim2.new(1, -58, 1, -56))
 settingsButton.ZIndex = 104
 
 local lyricsPreview = Instance.new("TextLabel")
 lyricsPreview.BackgroundTransparency = 1
-lyricsPreview.Position = UDim2.fromOffset(18, 101)
-lyricsPreview.Size = UDim2.new(1, -36, 0, 18)
+lyricsPreview.Position = UDim2.fromOffset(18, 109)
+lyricsPreview.Size = UDim2.new(1, -36, 0, 22)
 lyricsPreview.Font = Enum.Font.GothamMedium
 lyricsPreview.Text = "歌词等待中..."
 lyricsPreview.TextSize = 10
@@ -710,11 +708,11 @@ local screenLyric = Instance.new("TextLabel")
 screenLyric.BackgroundColor3 = Color3.fromRGB(12, 13, 17)
 screenLyric.BackgroundTransparency = 0.12
 screenLyric.BorderSizePixel = 0
-screenLyric.Size = UDim2.fromOffset(520, 44)
-screenLyric.Position = UDim2.new(0.5, -260, 0, 72)
+screenLyric.Size = UDim2.new(0.86, 0, 0, 42)
+screenLyric.Position = UDim2.new(0.07, 0, 0, 74)
 screenLyric.Font = Enum.Font.GothamMedium
 screenLyric.Text = ""
-screenLyric.TextSize = 17
+screenLyric.TextSize = 15
 screenLyric.TextColor3 = Color3.fromRGB(235, 242, 255)
 screenLyric.TextXAlignment = Enum.TextXAlignment.Center
 screenLyric.Visible = false
@@ -723,14 +721,30 @@ screenLyric.Parent = gui
 corner(screenLyric, 18)
 stroke(screenLyric, Color3.fromRGB(85, 125, 210), 0.45, 1)
 
+local settingsBackdrop = Instance.new("TextButton")
+settingsBackdrop.Name = "SettingsBackdrop"
+settingsBackdrop.Text = ""
+settingsBackdrop.AutoButtonColor = false
+settingsBackdrop.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+settingsBackdrop.BackgroundTransparency = 0.55
+settingsBackdrop.BorderSizePixel = 0
+settingsBackdrop.Size = UDim2.fromScale(1, 1)
+settingsBackdrop.Visible = false
+settingsBackdrop.ZIndex = 118
+settingsBackdrop.Parent = gui
+
 local settingsPanel = Instance.new("Frame")
-settingsPanel.Size = UDim2.fromOffset(300, 285)
-settingsPanel.Position = UDim2.new(0.5, -150, 0, 232)
+settingsPanel.Size = UDim2.fromOffset(360, 318)
+settingsPanel.Position = UDim2.new(0.5, -180, 0.5, -159)
 settingsPanel.BackgroundColor3 = Color3.fromRGB(18, 19, 24)
 settingsPanel.BorderSizePixel = 0
 settingsPanel.Visible = false
 settingsPanel.ZIndex = 120
 settingsPanel.Parent = gui
+
+local settingsScale = Instance.new("UIScale")
+settingsScale.Scale = 0.88
+settingsScale.Parent = settingsPanel
 corner(settingsPanel, 16)
 stroke(settingsPanel, Color3.fromRGB(90, 120, 190), 0.3, 1)
 
@@ -749,10 +763,10 @@ settingsTitle.Parent = settingsPanel
 local settingsClose = button(settingsPanel, "×", UDim2.fromOffset(30, 30), UDim2.new(1, -38, 0, 7))
 settingsClose.ZIndex = 122
 
-local lyricsToggle = button(settingsPanel, "歌词：开启", UDim2.fromOffset(126, 32), UDim2.fromOffset(16, 48))
+local lyricsToggle = button(settingsPanel, "歌词：开启", UDim2.fromOffset(150, 34), UDim2.fromOffset(16, 50))
 lyricsToggle.ZIndex = 122
 
-local visualizerToggle = button(settingsPanel, "可视化：开启", UDim2.fromOffset(126, 32), UDim2.fromOffset(154, 48))
+local visualizerToggle = button(settingsPanel, "可视化：开启", UDim2.fromOffset(150, 34), UDim2.fromOffset(174, 50))
 visualizerToggle.ZIndex = 122
 
 local positionLabel = Instance.new("TextLabel")
@@ -767,9 +781,9 @@ positionLabel.TextXAlignment = Enum.TextXAlignment.Left
 positionLabel.ZIndex = 122
 positionLabel.Parent = settingsPanel
 
-local islandPosButton = button(settingsPanel, "灵动岛", UDim2.fromOffset(82, 30), UDim2.fromOffset(16, 114))
-local topPosButton = button(settingsPanel, "屏幕上方", UDim2.fromOffset(82, 30), UDim2.fromOffset(106, 114))
-local centerPosButton = button(settingsPanel, "屏幕中央", UDim2.fromOffset(82, 30), UDim2.fromOffset(196, 114))
+local islandPosButton = button(settingsPanel, "灵动岛", UDim2.fromOffset(100, 32), UDim2.fromOffset(16, 120))
+local topPosButton = button(settingsPanel, "屏幕上方", UDim2.fromOffset(100, 32), UDim2.fromOffset(126, 120))
+local centerPosButton = button(settingsPanel, "屏幕中央", UDim2.fromOffset(100, 32), UDim2.fromOffset(236, 120))
 islandPosButton.ZIndex = 122
 topPosButton.ZIndex = 122
 centerPosButton.ZIndex = 122
@@ -856,7 +870,7 @@ delayValue.Parent = settingsPanel
 
 local delayHint = Instance.new("TextLabel")
 delayHint.BackgroundTransparency = 1
-delayHint.Position = UDim2.fromOffset(16, 216)
+delayHint.Position = UDim2.fromOffset(16, 263)
 delayHint.Size = UDim2.new(1, -32, 0, 16)
 delayHint.Font = Enum.Font.Gotham
 delayHint.Text = "左侧提前 · 右侧延后 · 范围 ±5 秒"
@@ -866,13 +880,13 @@ delayHint.TextXAlignment = Enum.TextXAlignment.Left
 delayHint.ZIndex = 122
 delayHint.Parent = settingsPanel
 
-local loopButton = button(settingsPanel, "循环：关闭", UDim2.fromOffset(126, 30), UDim2.fromOffset(16, 240))
+local loopButton = button(settingsPanel, "循环：关闭", UDim2.fromOffset(150, 32), UDim2.fromOffset(16, 282))
 loopButton.ZIndex = 122
 
 local lyricsHint = Instance.new("TextLabel")
 lyricsHint.BackgroundTransparency = 1
-lyricsHint.Position = UDim2.fromOffset(154, 240)
-lyricsHint.Size = UDim2.fromOffset(130, 30)
+lyricsHint.Position = UDim2.fromOffset(176, 282)
+lyricsHint.Size = UDim2.fromOffset(165, 30)
 lyricsHint.Font = Enum.Font.Gotham
 lyricsHint.Text = "支持 .lrc 时间轴歌词"
 lyricsHint.TextSize = 8
@@ -880,6 +894,8 @@ lyricsHint.TextColor3 = Color3.fromRGB(105, 110, 122)
 lyricsHint.TextXAlignment = Enum.TextXAlignment.Right
 lyricsHint.ZIndex = 122
 lyricsHint.Parent = settingsPanel
+
+updatePositionButtons()
 
 local sound = Instance.new("Sound")
 sound.Name = "GoldDust_Local"
@@ -948,10 +964,12 @@ local function updateLyric(position)
     end
 
     if lyricsPosition == "Island" then
+        lyricsPreview.Visible = true
         lyricsPreview.Text = currentText
         screenLyric.Visible = false
     else
-        screenLyric.Visible = musicPlaying
+        lyricsPreview.Visible = false
+        screenLyric.Visible = musicPlaying and lyricsEnabled
 
         if musicPlaying then
             screenLyric.Text = currentText
@@ -993,14 +1011,19 @@ local function setLyricsPosition(position)
 
     if position == "Island" then
         screenLyric.Visible = false
+        lyricsPreview.Visible = true
         lyricsPreview.Text = currentLyricIndex > 0 and lyrics[currentLyricIndex].text or "♪"
     else
+        lyricsPreview.Visible = false
         screenLyric.Visible = musicPlaying and lyricsEnabled
+
         if position == "Top" then
-            screenLyric.Position = UDim2.new(0.5, -260, 0, 72)
+            screenLyric.Position = UDim2.new(0.07, 0, 0, 74)
         else
-            screenLyric.Position = UDim2.new(0.5, -260, 0.55, 0)
+            screenLyric.Position = UDim2.new(0.07, 0, 0.55, 0)
         end
+
+        updateLyric(sound.TimePosition)
     end
 end
 
@@ -1014,7 +1037,7 @@ end
 local function showIsland()
     island.Visible = true
     islandScale.Scale = 0.2
-    island.Position = UDim2.new(0.5, -88, 0, -4)
+    island.Position = UDim2.new(0.5, -88, 0, 12)
     tween(islandScale, 0.45, {Scale = 1}, Enum.EasingStyle.Back)
     tween(island, 0.45, {Position = UDim2.new(0.5, -88, 0, 12)}, Enum.EasingStyle.Back)
 end
@@ -1050,85 +1073,64 @@ local function expandIsland()
 end
 
 local function openSettings()
-    settingsOpen = true
-    settingsPanel.Visible = true
-    settingsPanel.Position = UDim2.new(0.5, -150, 0, 252)
-    local panelScale = settingsPanel:FindFirstChildOfClass("UIScale")
-    if not panelScale then
-        panelScale = Instance.new("UIScale")
-        panelScale.Scale = 0.88
-        panelScale.Parent = settingsPanel
+    if settingsOpen then
+        return
     end
-    tween(panelScale, 0.3, {Scale = 1}, Enum.EasingStyle.Back)
-    tween(settingsPanel, 0.3, {Position = UDim2.new(0.5, -150, 0, 232)}, Enum.EasingStyle.Back)
+
+    settingsOpen = true
+    settingsBackdrop.Visible = true
+    settingsPanel.Visible = true
+    settingsScale.Scale = 0.82
+
+    tween(settingsBackdrop, 0.22, {
+        BackgroundTransparency = 0.55
+    }, Enum.EasingStyle.Quad)
+
+    tween(settingsScale, 0.35, {
+        Scale = 1
+    }, Enum.EasingStyle.Back)
 end
 
 local function closeSettings()
-    settingsOpen = false
-    local panelScale = settingsPanel:FindFirstChildOfClass("UIScale")
-    if panelScale then
-        tween(panelScale, 0.2, {Scale = 0.88}, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+    if not settingsOpen then
+        return
     end
-    tween(settingsPanel, 0.2, {Position = UDim2.new(0.5, -150, 0, 252)}, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+
+    settingsOpen = false
+    tween(settingsScale, 0.2, {
+        Scale = 0.82
+    }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+
+    tween(settingsBackdrop, 0.2, {
+        BackgroundTransparency = 1
+    }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+
     task.wait(0.2)
     settingsPanel.Visible = false
+    settingsBackdrop.Visible = false
 end
 
 island.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         islandPressed = true
-        draggingIsland = false
-        dragStart = input.Position
-        islandStart = island.Position
     end
 end)
 
-UserInputService.InputChanged:Connect(function(input)
-    if islandPressed and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        local delta = input.Position - dragStart
-        if math.abs(delta.X) > 5 or math.abs(delta.Y) > 5 then
-            draggingIsland = true
-        end
-
-        if draggingIsland then
-            island.Position = UDim2.new(
-                islandStart.X.Scale,
-                islandStart.X.Offset + delta.X,
-                islandStart.Y.Scale,
-                islandStart.Y.Offset + delta.Y
-            )
-        end
-    end
-end)
-
-UserInputService.InputEnded:Connect(function(input)
+island.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        local wasDrag = draggingIsland
-        islandPressed = false
-        draggingIsland = false
-
-        if not wasDrag then
+        if islandPressed then
             expandIsland()
         end
+        islandPressed = false
     end
-end)
-
-islandPlay.MouseButton1Click:Connect(function()
-    if musicPlaying then
-        sound:Pause()
-        musicPlaying = false
-    else
-        if sound.TimePosition >= sound.TimeLength and sound.TimeLength > 0 then
-            sound.TimePosition = 0
-        end
-        sound:Resume()
-        musicPlaying = true
-    end
-    updateMusicButtons()
 end)
 
 expandedClose.MouseButton1Click:Connect(function()
-    collapseExpanded()
+    if settingsOpen then
+        closeSettings()
+    else
+        collapseExpanded()
+    end
 end)
 
 mainPlay.MouseButton1Click:Connect(function()
@@ -1177,13 +1179,19 @@ settingsClose.MouseButton1Click:Connect(function()
     closeSettings()
 end)
 
+settingsBackdrop.MouseButton1Click:Connect(function()
+    closeSettings()
+end)
+
 lyricsToggle.MouseButton1Click:Connect(function()
     lyricsEnabled = not lyricsEnabled
     lyricsToggle.Text = lyricsEnabled and "歌词：开启" or "歌词：关闭"
     if not lyricsEnabled then
         screenLyric.Visible = false
+        lyricsPreview.Visible = false
         lyricsPreview.Text = ""
     else
+        lyricsPreview.Visible = lyricsPosition == "Island"
         updateLyric(sound.TimePosition)
     end
 end)
